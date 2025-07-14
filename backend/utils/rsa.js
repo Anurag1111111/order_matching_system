@@ -6,7 +6,7 @@ import { config } from '../config.js';
 
 const privateKeyPath = path.resolve(config.rsa.privateKeyPath);
 
-// ✅ Node.js RSA decrypt
+//Node.js RSA decrypt
 export function decryptRSA(encryptedData) {
   try {
     const privateKey = fs.readFileSync(privateKeyPath, 'utf8');
@@ -25,7 +25,7 @@ export function decryptRSA(encryptedData) {
   }
 }
 
-// ✅ Fallback: OpenSSL decrypt
+//Fallback: OpenSSL decrypt
 export function decryptOpenSSL(encryptedData) {
   try {
     const tempFile = './temp_encrypted.bin';
