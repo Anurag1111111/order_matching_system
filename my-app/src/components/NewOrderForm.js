@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import config from "../config/config";
 import Loader from "./Loader";
+import { encryptData } from "../utils/encrypt";
 
 const NewOrderForm = ({ isOpen, closeModal, updatePendingOrders }) => {
   const [buyer_qty, setBuyer_qty] = useState("");
@@ -15,17 +16,21 @@ const NewOrderForm = ({ isOpen, closeModal, updatePendingOrders }) => {
     setLoading(true);
     try {
       // Prepare order data based on role
-    const orderData =
-      role === "buyer"
-        ? { type: "buyer", qty: parseInt(buyer_qty), price: parseFloat(buyer_price) }
-        : { type: "seller", qty: parseInt(seller_qty), price: parseFloat(seller_price) };
+      const orderData =
+        role === "buyer"
+          ? { type: "buyer", qty: parseInt(buyer_qty), price: parseFloat(buyer_price) }
+          : { type: "seller", qty: parseInt(seller_qty), price: parseFloat(seller_price) };
 
-    // Send to correct backend endpoint
-    const res = await axios.post(`${config.apiUrl}/api/order`, orderData);
+      const encryptedPayload = encryptData(orderData);
 
-    console.log("response:", res.data);
+      // Send to correct backend endpoint
+      const res = await axios.post(`${config.apiUrl}/api/order`, {
+        encryptedData: encryptedPayload,
+      });
 
-    updatePendingOrders(res.data);
+      console.log("response:", res.data);
+
+      updatePendingOrders(res.data);
     } catch (error) {
       console.error("Error creating new order:", error);
     }
@@ -40,9 +45,8 @@ const NewOrderForm = ({ isOpen, closeModal, updatePendingOrders }) => {
 
   return (
     <div
-      className={`fixed inset-0 flex items-center justify-center ${
-        isOpen ? "visible" : "hidden"
-      }`}
+      className={`fixed inset-0 flex items-center justify-center ${isOpen ? "visible" : "hidden"
+        }`}
     >
       <div className="fixed inset-0 bg-black opacity-50"></div>
       {loading ? (
@@ -65,21 +69,19 @@ const NewOrderForm = ({ isOpen, closeModal, updatePendingOrders }) => {
 
             <div className="flex items-center">
               <button
-                className={`mr-4 px-3 py-1 rounded font-semibold ${
-                  role === "buyer"
+                className={`mr-4 px-3 py-1 rounded font-semibold ${role === "buyer"
                     ? "bg-blue-100 text-green-600"
                     : "bg-gray-100  text-green-600"
-                }`}
+                  }`}
                 onClick={() => setRole("buyer")}
               >
                 Buyer
               </button>
               <button
-                className={`px-3 py-1 rounded  font-semibold ${
-                  role === "seller"
+                className={`px-3 py-1 rounded  font-semibold ${role === "seller"
                     ? "bg-blue-100 text-red-600"
                     : "bg-gray-100 text-red-600"
-                }`}
+                  }`}
                 onClick={() => setRole("seller")}
               >
                 Seller

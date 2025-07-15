@@ -1,5 +1,5 @@
 const config = {
-  apiUrl: 'https://matching-order-smyn.onrender.com' || 'http://localhost:4000/api/v1',
+  apiUrl: 'https://ordermatchingsystem-production.up.railway.app' || 'http://localhost:3000',
   };
   
   export default config;

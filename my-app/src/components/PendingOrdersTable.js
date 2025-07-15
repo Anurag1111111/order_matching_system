@@ -1,21 +1,16 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import config from "../config/config";
-import Loader from "./Loader"; // Import Loader component
-
+import Loader from "./Loader";
 
 const PendingOrdersTable = () => {
   const [pendingBuyer, setPendingBuyer] = useState([]);
   const [pendingSeller, setPendingSeller] = useState([]);
-  const [loading, setLoading] = useState(true); 
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetchOrders();
-
-    // Set interval to fetch orders every 5 seconds 
     const interval = setInterval(fetchOrders, 5000);
-
-    // Cleanup function to clear interval when component unmounts
     return () => clearInterval(interval);
   }, []);
 
@@ -64,42 +59,44 @@ const PendingOrdersTable = () => {
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
                 {pendingBuyer.map((buyerOrder, index) => {
-                  const correspondingSellerOrder = pendingSeller[index] || {}; 
-  
+                  const correspondingSellerOrder = pendingSeller[index] || {};
                   return (
                     <tr
                       key={index}
                       className={index % 2 === 0 ? "bg-gray-50" : "bg-white"}
                     >
                       <td className="px-6 py-4 whitespace-nowrap">
-                        {buyerOrder.buyer_qty || "-"}
+                        {buyerOrder.qty || "-"}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        {buyerOrder.buyer_price || "-"}
+                        {buyerOrder.price || "-"}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        {correspondingSellerOrder.seller_price || "-"}
+                        {correspondingSellerOrder.price || "-"}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        {correspondingSellerOrder.seller_qty || "-"}
+                        {correspondingSellerOrder.qty || "-"}
                       </td>
                     </tr>
                   );
                 })}
+
                 {pendingSeller
                   .slice(pendingBuyer.length)
                   .map((sellerOrder, index) => (
                     <tr
                       key={pendingBuyer.length + index}
-                      className={index % 2 === 0 ? "bg-gray-50" : "bg-white"}
+                      className={
+                        index % 2 === 0 ? "bg-gray-50" : "bg-white"
+                      }
                     >
                       <td className="px-6 py-4 whitespace-nowrap">-</td>
                       <td className="px-6 py-4 whitespace-nowrap">-</td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        {sellerOrder.seller_price || "-"}
+                        {sellerOrder.price || "-"}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        {sellerOrder.seller_qty || "-"}
+                        {sellerOrder.qty || "-"}
                       </td>
                     </tr>
                   ))}
