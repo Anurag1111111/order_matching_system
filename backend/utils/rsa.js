@@ -4,9 +4,18 @@ import crypto from 'crypto';
 import { execSync } from 'child_process';
 import { config } from '../config.js';
 
+// Reconstruct the private key from base64 if PRIVATE_KEY_BASE64 is present
+const base64 = process.env.PRIVATE_KEY_BASE64;
 const privateKeyPath = path.resolve(config.rsa.privateKeyPath);
 
-//Node.js RSA decrypt
+// This ensures the private.pem file exists (especially in Railway)
+if (base64 && !fs.existsSync(privateKeyPath)) {
+  const pemBuffer = Buffer.from(base64, 'base64');
+  fs.writeFileSync(privateKeyPath, pemBuffer);
+  console.log("private.pem file restored from base64");
+}
+
+// Node.js RSA decrypt
 export function decryptRSA(encryptedData) {
   try {
     const privateKey = fs.readFileSync(privateKeyPath, 'utf8');
@@ -25,22 +34,21 @@ export function decryptRSA(encryptedData) {
   }
 }
 
-//Fallback: OpenSSL decrypt
+// Fallback: OpenSSL decrypt
 export function decryptOpenSSL(encryptedData) {
   try {
     const tempFile = './temp_encrypted.bin';
     const decryptedOutput = './temp_decrypted.txt';
 
-    // Write encrypted data to a temp file (base64 decoded)
+    // Write encrypted data to temp file
     fs.writeFileSync(tempFile, Buffer.from(encryptedData, 'base64'));
 
-    // Run OpenSSL to decrypt it
+    // OpenSSL fallback
     execSync(`openssl rsautl -decrypt -inkey ${privateKeyPath} -in ${tempFile} -out ${decryptedOutput}`);
 
-    // Read decrypted output
     const decrypted = fs.readFileSync(decryptedOutput, 'utf8');
 
-    // Clean up temp files
+    // Clean up
     fs.unlinkSync(tempFile);
     fs.unlinkSync(decryptedOutput);
 
