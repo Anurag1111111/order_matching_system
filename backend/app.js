@@ -16,23 +16,9 @@ app.use(express.json());
 app.use(cookieParser());
 
 // CORS
-const allowedOrigins = [
-  "http://localhost:3001",            
-  "http://localhost:5173",            
-  "https://matching-order.vercel.app" 
-];
-
 app.use(
   cors({
-    origin: function (origin, callback) {
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        console.log("Blocked by CORS:", origin);
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
-    credentials: true,
+    origin: "*", // only for testing
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
   })
 );
