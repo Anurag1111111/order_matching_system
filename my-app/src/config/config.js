@@ -1,5 +1,5 @@
 const config = {
-  apiUrl: 'https://ordermatchingsystem-production.up.railway.app' || 'http://localhost:3000',
-  };
-  
-  export default config;
+  apiUrl: process.env.REACT_APP_API_URL,
+};
+
+export default config;
