@@ -2,6 +2,7 @@ import express from "express";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import cors from "cors";
+import rateLimit from 'express-rate-limit';
 
 // Route file
 import orderRoutes from "./routes/orderRoutes.js";
@@ -14,6 +15,14 @@ export const app = express();
 // Middleware
 app.use(express.json());
 app.use(cookieParser());
+
+// Rate Limiter
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 mins
+  max: 100, // Limit each IP to 100 requests
+  message: 'Too many requests, try again later.'
+});
+app.use(limiter);
 
 // CORS
 app.use(
@@ -29,5 +38,4 @@ app.get("/", (req, res) => {
   res.send("Order Matching API is running!");
 });
 
-// Use single route file
 app.use("/api", orderRoutes);

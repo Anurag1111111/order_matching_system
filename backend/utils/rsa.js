@@ -4,11 +4,9 @@ import crypto from 'crypto';
 import { execSync } from 'child_process';
 import { config } from '../config.js';
 
-// Reconstruct the private key from base64 if PRIVATE_KEY_BASE64 is present
 const base64 = process.env.PRIVATE_KEY_BASE64;
 const privateKeyPath = path.resolve(config.rsa.privateKeyPath);
 
-// This ensures the private.pem file exists (especially in Railway)
 if (base64 && !fs.existsSync(privateKeyPath)) {
   const pemBuffer = Buffer.from(base64, 'base64');
   fs.writeFileSync(privateKeyPath, pemBuffer);

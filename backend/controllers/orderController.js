@@ -9,7 +9,7 @@ export const placeOrder = async (req, res) => {
       const encrypted = req.body.encryptedData;
       decrypted = JSON.parse(decryptRSA(encrypted));
     } catch (rsaError) {
-      console.warn("⚠️ RSA failed, using OpenSSL fallback");
+      console.warn("RSA failed, using OpenSSL fallback");
       decrypted = JSON.parse(decryptOpenSSL(req.body.encryptedData));
     }
 
